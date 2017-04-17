@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 public class GameRunner implements KeyListener
@@ -45,12 +46,14 @@ public class GameRunner implements KeyListener
 
 	}
 
+
 	// where the player is placed when the game is initially executed
 	private void placePlayer()
 	{
     	currentRow = (int) (MAZE_DIMENSION * Math.random());
     	currentCol = (int) (MAZE_DIMENSION * Math.random());
     	model.set(currentRow, currentCol, '5'); //A Spartan warrior is at index 5
+
     	updateView();
 	}
 
@@ -121,12 +124,20 @@ public class GameRunner implements KeyListener
 					// if the block is a question mark
 					if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0032')
 					{
-					    JOptionPane.showMessageDialog(null, "Claire and Dec are nice people :)");
+					    JOptionPane.showMessageDialog(null, "This is a tip of sorts");
+						model.set(row, col, '\u0020'); // // removes block
+
 					}
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0031')
+					{
+					    JOptionPane.showMessageDialog(null, "For some reason you're stronger now. Good for you!");
+						model.set(row, col, '\u0020'); // \u0020 is a blank
+					}
+
 					else
 					{
 						// removes block in front of the character
-						model.set(row, col, '\u0020');
+						model.set(row, col, '\u0020'); // \u0020 is a blank
 					    JOptionPane.showMessageDialog(null, "Item Destroyed");
 
 					}
