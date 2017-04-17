@@ -21,7 +21,7 @@ public class Sprite
 	}
 
 	public BufferedImage getNext()
-	{ //Returns the next image frame
+	{ //Returns the next image frame - Controls spartan's blinking
 		int idx = index;
 		if (index < frames.length - 1)
 		{

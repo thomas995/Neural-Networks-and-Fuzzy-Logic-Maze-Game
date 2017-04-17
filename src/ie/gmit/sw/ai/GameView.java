@@ -82,7 +82,8 @@ public class GameView extends JPanel implements ActionListener
         			{
 	        			if (row == currentRow && col == currentCol)
 	        			{
-	        				g2.setColor(Color.YELLOW);
+	        				// changes the colour of the Spartan
+	        				g2.setColor(Color.ORANGE);
 	        			}
 	        			else
 	        			{

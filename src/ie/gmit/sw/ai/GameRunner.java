@@ -2,7 +2,10 @@ package ie.gmit.sw.ai;
 
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 public class GameRunner implements KeyListener
 {
 	private static final int MAZE_DIMENSION = 100;
@@ -12,8 +15,10 @@ public class GameRunner implements KeyListener
 	private int currentRow;
 	private int currentCol;
 
+
 	public GameRunner() throws Exception
 	{
+
 		model = new Maze(MAZE_DIMENSION);
     	view = new GameView(model);
 
@@ -27,7 +32,7 @@ public class GameRunner implements KeyListener
     	view.setMinimumSize(d);
     	view.setMaximumSize(d);
 
-    	JFrame f = new JFrame("GMIT - B.Sc. in Computing (Software Development) By Thomas McNamara");
+    	JFrame f = new JFrame("GMIT - B.Sc. in Computing (Software Development) By Thomas McNamara and Alanna Curran");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.addKeyListener(this);
         f.getContentPane().setLayout(new FlowLayout());
@@ -36,8 +41,11 @@ public class GameRunner implements KeyListener
         f.setLocation(100,100);
         f.pack();
         f.setVisible(true);
+
+
 	}
 
+	// where the player is placed when the game is initially executed
 	private void placePlayer()
 	{
     	currentRow = (int) (MAZE_DIMENSION * Math.random());
@@ -46,7 +54,9 @@ public class GameRunner implements KeyListener
     	updateView();
 	}
 
-	private void updateView(){
+	// draw the characters new position on the window
+	private void updateView()
+	{
 		view.setCurrentRow(currentRow);
 		view.setCurrentCol(currentCol);
 	}
@@ -55,20 +65,33 @@ public class GameRunner implements KeyListener
     {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && currentCol < MAZE_DIMENSION - 1)
         {
-        	if (isValidMove(currentRow, currentCol + 1)) currentCol++;
-        }else if (e.getKeyCode() == KeyEvent.VK_LEFT && currentCol > 0)
+        	if (isValidMove(currentRow, currentCol + 1))
+        		currentCol++;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_LEFT && currentCol > 0)
         {
-        	if (isValidMove(currentRow, currentCol - 1)) currentCol--;
-        }else if (e.getKeyCode() == KeyEvent.VK_UP && currentRow > 0)
+        	if (isValidMove(currentRow, currentCol - 1))
+        		currentCol--;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_UP && currentRow > 0)
         {
-        	if (isValidMove(currentRow - 1, currentCol)) currentRow--;
-        }else if (e.getKeyCode() == KeyEvent.VK_DOWN && currentRow < MAZE_DIMENSION - 1)
+        	if (isValidMove(currentRow - 1, currentCol))
+        		currentRow--;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_DOWN && currentRow < MAZE_DIMENSION - 1)
         {
-        	if (isValidMove(currentRow + 1, currentCol)) currentRow++;
-        }else if (e.getKeyCode() == KeyEvent.VK_Z)
+        	if (isValidMove(currentRow + 1, currentCol))
+        		currentRow++;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_Z)
         {
         	view.toggleZoom();
-        }else
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+        {
+        	System.exit(0);
+        }
+        else
         {
         	return;
         }
@@ -78,17 +101,44 @@ public class GameRunner implements KeyListener
     public void keyReleased(KeyEvent e) {} //Ignore
 	public void keyTyped(KeyEvent e) {} //Ignore
 
+
+
 	private boolean isValidMove(int row, int col)
 	{
 		if (row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == ' ')
 		{
-			model.set(currentRow, currentCol, '\u0020');
+			model.set(currentRow, currentCol, '\u0020'); // places a space in your last position
 			model.set(row, col, '5');
 			return true;
 		}
 		else
 		{
+			{
+
+				if (JOptionPane.showConfirmDialog(null, "Do you want to Interact with this?", "WARNING",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+	        	{
+	        	    // yes option
+					// if the block is a question mark
+					if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0032')
+					{
+					    JOptionPane.showMessageDialog(null, "Claire and Dec are nice people :)");
+					}
+					else
+					{
+						// removes block in front of the character
+						model.set(row, col, '\u0020');
+					    JOptionPane.showMessageDialog(null, "Item Destroyed");
+
+					}
+	        	}
+	        	else
+	        	{
+	        	    // no option
+	        	}
+			}
 			return false; //Can't move
+
+
 		}
 	}
 
@@ -118,5 +168,7 @@ public class GameRunner implements KeyListener
 	public static void main(String[] args) throws Exception
 	{
 		new GameRunner();
+
+
 	}
 }
