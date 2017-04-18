@@ -27,7 +27,7 @@ public class GameView extends JPanel implements ActionListener
 		setDoubleBuffered(true);
 		timer = new Timer(300, this);
 		timer.start();
-	}
+	}//- End of GameView()
 
 	public void setCurrentRow(int row)
 	{
@@ -39,8 +39,8 @@ public class GameView extends JPanel implements ActionListener
 		}else
 		{
 			currentRow = row;
-		}
-	}
+		}//- End of if/else
+	}//- End of setCurrentRow()
 
 	public void setCurrentCol(int col)
 	{
@@ -54,8 +54,8 @@ public class GameView extends JPanel implements ActionListener
 		else
 		{
 			currentCol = col;
-		}
-	}
+		}//- End of if/else
+	}//- End of setCurrentCol()
 
 	public void paintComponent(Graphics g)
 	{
@@ -88,14 +88,14 @@ public class GameView extends JPanel implements ActionListener
 	        			else
 	        			{
 	        				g2.setColor(reds[(int) (Math.random() * 3)]);
-	        			}
+	        			}//- End of inner if/else
         				g2.fillRect(x1, y1, size, size);
-        			}
+        			}//- End of middle if
         		}
         		else
         		{
         			ch = maze.get(currentRow - cellpadding + row, currentCol - cellpadding + col);
-        		}
+        		}//- End of outer if/else
 
         		imageIndex = (int) ch;
         		imageIndex -= offset;
@@ -106,15 +106,15 @@ public class GameView extends JPanel implements ActionListener
         		}else
         		{
         			g2.drawImage(sprites[imageIndex].getNext(), x1, y1, null);
-        		}
-        	}
-        }
-	}
+        		}//- End of if/else
+        	}//- End of inner for
+        }//- End of outer for
+	}//- End of paintComponent()
 
 	public void toggleZoom()
 	{
 		zoomOut = !zoomOut;
-	}
+	}//- End of toggleZoom()
 
 	public void actionPerformed(ActionEvent e)
 	{
@@ -124,12 +124,12 @@ public class GameView extends JPanel implements ActionListener
 		}else
 		{
 			enemy_state = 5;
-		}
+		}//- End of if/else
 		this.repaint();
-	}
+	}//- End of actionPerformed()
 
 	public void setSprites(Sprite[] sprites)
 	{
 		this.sprites = sprites;
-	}
-}
+	}//- End of setSprites()
+}//- End of GameView

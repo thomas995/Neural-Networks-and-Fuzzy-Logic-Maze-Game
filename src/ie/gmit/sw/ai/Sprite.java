@@ -17,8 +17,8 @@ public class Sprite
 
 		for (int i = 0; i < images.length; i++){
 			frames[i] = ImageIO.read(new java.io.File(images[i])); //Read in each image as a BufferedImage
-		}
-	}
+		}//- End of for
+	}//- End of Sprite()
 
 	public BufferedImage getNext()
 	{ //Returns the next image frame - Controls spartan's blinking
@@ -29,12 +29,13 @@ public class Sprite
 		}else
 		{
 			index = 0; //Circle back to the start of the array
-		}
+		}//- End of if/else
 		return frames[idx];
-	}
+	}//- End of getNext()
 
 	public String getName()
 	{
 		return this.name;
-	}
-}
+	}//- End of getName()
+
+}//- End of Sprite

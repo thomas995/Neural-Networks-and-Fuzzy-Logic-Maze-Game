@@ -25,7 +25,7 @@ public class Maze
 		addFeature('\u003B', '0', featureNumber); //; is a Orange Spider, 0 is a hedge
 		addFeature('\u003C', '0', featureNumber); //< is a Red Spider, 0 is a hedge
 		addFeature('\u003D', '0', featureNumber); //= is a Yellow Spider, 0 is a hedge
-	}
+	}//- End of Maze()
 
 	private void init()
 	{
@@ -34,9 +34,9 @@ public class Maze
 			for (int col = 0; col < maze[row].length; col++)
 			{
 				maze[row][col] = '0'; //Index 0 is a hedge...
-			}
-		}
-	}
+			}//- End of inner for
+		}//- End of outer for
+	}//- End of init()
 
 	private void addFeature(char feature, char replace, int number)
 	{
@@ -49,9 +49,9 @@ public class Maze
 			if (maze[row][col] == replace){
 				maze[row][col] = feature;
 				counter++;
-			}
-		}
-	}
+			}//- End of if
+		}//- End of while
+	}//- End of addFeature()
 
 	private void buildMaze()
 	{
@@ -66,29 +66,29 @@ public class Maze
 				}else
 				{
 					if (row + 1 < maze.length - 1)maze[row + 1][col] = '\u0020';
-				}
-			}
-		}
-	}
+				}//- End of if/else
+			}//- End of inner for
+		}//- End of outer for
+	}//- End of buildMaze()
 
 	public char[][] getMaze()
 	{
 		return this.maze;
-	}
+	}//- End of getMaze()
 
 	public char get(int row, int col)
 	{
 		return this.maze[row][col];
-	}
+	}//- End of get()
 
 	public void set(int row, int col, char c)
 	{
 		this.maze[row][col] = c;
-	}
+	}//- End of set()
 
 	public int size(){
 		return this.maze.length;
-	}
+	}//- End of size()
 
 	public String toString()
 	{
@@ -99,9 +99,9 @@ public class Maze
 			{
 				sb.append(maze[row][col]);
 				if (col < maze[row].length - 1) sb.append(",");
-			}
+			}//- End of inner for
 			sb.append("\n");
-		}
+		}//- End of outer for
 		return sb.toString();
-	}
-}
+	}//- End of toString()
+}//- End of Maze
