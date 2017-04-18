@@ -15,7 +15,10 @@ public class GameRunner implements KeyListener
 	private Maze model;
 	private int currentRow;
 	private int currentCol;
-
+	private int maxHealth = 20;
+	private int maxStrength = 5;
+	private int playerHealth = 20;
+	private int playerStrength = 5;
 
 	public GameRunner() throws Exception
 	{
@@ -44,7 +47,7 @@ public class GameRunner implements KeyListener
         f.setVisible(true);
 
 
-	}
+	}//- End of GameRunner()
 
 
 	// where the player is placed when the game is initially executed
@@ -55,36 +58,36 @@ public class GameRunner implements KeyListener
     	model.set(currentRow, currentCol, '5'); //A Spartan warrior is at index 5
 
     	updateView();
-	}
+	}//- End of placePlayer()
 
 	// draw the characters new position on the window
 	private void updateView()
 	{
 		view.setCurrentRow(currentRow);
 		view.setCurrentCol(currentCol);
-	}
+	}//- End of updateView()
 
     public void keyPressed(KeyEvent e)
     {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && currentCol < MAZE_DIMENSION - 1)
         {
         	if (isValidMove(currentRow, currentCol + 1))
-        		currentCol++;
+        		currentCol++; //- Move Spartian Right
         }
         else if (e.getKeyCode() == KeyEvent.VK_LEFT && currentCol > 0)
         {
         	if (isValidMove(currentRow, currentCol - 1))
-        		currentCol--;
+        		currentCol--; //- Move Spartian Left
         }
         else if (e.getKeyCode() == KeyEvent.VK_UP && currentRow > 0)
         {
         	if (isValidMove(currentRow - 1, currentCol))
-        		currentRow--;
+        		currentRow--; //- Move Spartian Forward/Up
         }
         else if (e.getKeyCode() == KeyEvent.VK_DOWN && currentRow < MAZE_DIMENSION - 1)
         {
         	if (isValidMove(currentRow + 1, currentCol))
-        		currentRow++;
+        		currentRow++; //- Move Spartian Backward/Down
         }
         else if (e.getKeyCode() == KeyEvent.VK_Z)
         {
@@ -94,13 +97,18 @@ public class GameRunner implements KeyListener
         {
         	System.exit(0);
         }
+        else if(e.getKeyCode() == KeyEvent.VK_S)
+        {
+        	//- Display Player Stats in a popup.
+        	JOptionPane.showMessageDialog(null, "Player Stats: \n\tHealth: " + playerHealth + "/" + maxHealth + "\n\tStrength: " + playerStrength + "/" + maxStrength);
+        }
         else
         {
         	return;
-        }
+        }//- End of in/else
 
         updateView();
-    }
+    }//- End of keyPressed()
     public void keyReleased(KeyEvent e) {} //Ignore
 	public void keyTyped(KeyEvent e) {} //Ignore
 
@@ -125,6 +133,7 @@ public class GameRunner implements KeyListener
 					if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0031')
 					{
 					    JOptionPane.showMessageDialog(null, "For some reason you're stronger now. Good for you!");
+					    maxHealth += 2;
 						model.set(row, col, '\u0020'); // // removes block
 					}
 
@@ -138,7 +147,9 @@ public class GameRunner implements KeyListener
 					// Bomb Block
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0033')
 					{
-						JOptionPane.showMessageDialog(null, "You are da bomb... No wait you were hit by it. You take { X } damage");
+						JOptionPane.showMessageDialog(null, "You are da bomb... No wait you were hit by it. You take 4 damage");
+						playerHealth -= 4;
+						amIAlive(playerHealth);
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 
 					}
@@ -147,55 +158,72 @@ public class GameRunner implements KeyListener
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0034')
 					{
 						// Deletes all blocks in a nearby radius
-						JOptionPane.showMessageDialog(null, "You've set off tzar bomba, thank goodness you were behind your computer screen.");
+						JOptionPane.showMessageDialog(null, "You've found a health bomb. Your health has been fully replenished.");
+						playerHealth = maxHealth;
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 					}
 					// Black Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0036')
 					{
-						JOptionPane.showMessageDialog(null, "Black");
+						JOptionPane.showMessageDialog(null, "Black enemy defeated, but sadly you took 2 damage right at the end of the battle!");
+						playerHealth -= 2;
+						amIAlive(playerHealth);
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 					}
 					// Blue Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0037')
 					{
-						JOptionPane.showMessageDialog(null, "Blue");
+						JOptionPane.showMessageDialog(null, "Blue enemy defeated, but sadly you took 2 damage right at the end of the battle!");
+						playerHealth -= 2;
+						amIAlive(playerHealth);
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 					}
 					// Brown Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0038')
 					{
-						JOptionPane.showMessageDialog(null, "Brown");
+						JOptionPane.showMessageDialog(null, "Brown enemy defeated, but sadly you took 2 damage right at the end of the battle!");
+						playerHealth -= 2;
+						amIAlive(playerHealth);
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 					}
 					// Green Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0039')
 					{
-						JOptionPane.showMessageDialog(null, "Green");
+						JOptionPane.showMessageDialog(null, "Green enemy defeated, but sadly you took 2 damage right at the end of the battle!");
+						playerHealth -= 2;
+						amIAlive(playerHealth);
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 					}
 					// Grey Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003A')
 					{
-						JOptionPane.showMessageDialog(null, "Grey");
+						JOptionPane.showMessageDialog(null, "Grey enemy defeated, but sadly you took 2 damage right at the end of the battle!");
+						playerHealth -= 2;
+						amIAlive(playerHealth);
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 					}
 					// Orange Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003B')
 					{
-						JOptionPane.showMessageDialog(null, "Orange");
+						JOptionPane.showMessageDialog(null, "Orange enemy defeated, but sadly you took 2 damage right at the end of the battle!");
+						playerHealth -= 2;
+						amIAlive(playerHealth);
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 					}
 					// Red Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003C')
 					{
-						JOptionPane.showMessageDialog(null, "Red");
+						JOptionPane.showMessageDialog(null, "Red enemy defeated, but sadly you took 2 damage right at the end of the battle!");
+						playerHealth -= 2;
+						amIAlive(playerHealth);
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 					}
 					// Yellow Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003D')
 					{
-						JOptionPane.showMessageDialog(null, "Yellow");
+						JOptionPane.showMessageDialog(null, "Yellow enemy defeated, but sadly you took 2 damage right at the end of the battle!");
+						playerHealth -= 2;
+						amIAlive(playerHealth);
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 					}
 
@@ -212,8 +240,24 @@ public class GameRunner implements KeyListener
 	        	}
 			}
 			return false; //Can't move
+
+
+		}//- End of outer if/else
+	}//- End of isValidMove()
+	
+	private boolean amIAlive(int health) 
+	{
+		if (health > 0)
+		{
+			return true;
 		}
-	}
+		else
+		{
+			JOptionPane.showMessageDialog(null, "You died. Please try not to be spider food next time.");
+			System.exit(0);
+			return false;
+		}//- End of if/else
+	}//- End of amIAlive()
 
 	private Sprite[] getSprites() throws Exception
 	{
@@ -236,12 +280,12 @@ public class GameRunner implements KeyListener
 		sprites[12] = new Sprite("Red Spider", "resources/red_spider_1.png", "resources/red_spider_2.png");
 		sprites[13] = new Sprite("Yellow Spider", "resources/yellow_spider_1.png", "resources/yellow_spider_2.png");
 		return sprites;
-	}
+	}//- End of getSprites()
 
 	public static void main(String[] args) throws Exception
 	{
 		new GameRunner();
 
 
-	}
-}
+	}//- End of main()
+}//- End of GameRunner
