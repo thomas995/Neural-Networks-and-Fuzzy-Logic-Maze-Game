@@ -121,16 +121,81 @@ public class GameRunner implements KeyListener
 				if (JOptionPane.showConfirmDialog(null, "Do you want to Interact with this?", "WARNING",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 	        	{
 	        	    // yes option
-					// if the block is a question mark
-					if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0032')
-					{
-					    JOptionPane.showMessageDialog(null, "This is a tip of sorts");
-						model.set(row, col, '\u0020'); // // removes block
-
-					}
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0031')
+					// if the block is a Sword
+					if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0031')
 					{
 					    JOptionPane.showMessageDialog(null, "For some reason you're stronger now. Good for you!");
+						model.set(row, col, '\u0020'); // // removes block
+					}
+
+					// if the block is a Question Mark
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0032')
+					{
+					    JOptionPane.showMessageDialog(null, "This is a tip of sorts");
+						model.set(row, col, '\u0020'); // \u0020 is a blank
+					}
+
+					// Bomb Block
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0033')
+					{
+						JOptionPane.showMessageDialog(null, "You are da bomb... No wait you were hit by it. You take { X } damage");
+						model.set(row, col, '\u0020'); // \u0020 is a blank
+
+					}
+
+					 // H-Bomb Block
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0034')
+					{
+						// Deletes all blocks in a nearby radius
+						JOptionPane.showMessageDialog(null, "You've set off tzar bomba, thank goodness you were behind your computer screen.");
+						model.set(row, col, '\u0020'); // \u0020 is a blank
+					}
+					// Black Spider
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0036')
+					{
+						JOptionPane.showMessageDialog(null, "Black");
+						model.set(row, col, '\u0020'); // \u0020 is a blank
+					}
+					// Blue Spider
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0037')
+					{
+						JOptionPane.showMessageDialog(null, "Blue");
+						model.set(row, col, '\u0020'); // \u0020 is a blank
+					}
+					// Brown Spider
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0038')
+					{
+						JOptionPane.showMessageDialog(null, "Brown");
+						model.set(row, col, '\u0020'); // \u0020 is a blank
+					}
+					// Green Spider
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0039')
+					{
+						JOptionPane.showMessageDialog(null, "Green");
+						model.set(row, col, '\u0020'); // \u0020 is a blank
+					}
+					// Grey Spider
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003A')
+					{
+						JOptionPane.showMessageDialog(null, "Grey");
+						model.set(row, col, '\u0020'); // \u0020 is a blank
+					}
+					// Orange Spider
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003B')
+					{
+						JOptionPane.showMessageDialog(null, "Orange");
+						model.set(row, col, '\u0020'); // \u0020 is a blank
+					}
+					// Red Spider
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003C')
+					{
+						JOptionPane.showMessageDialog(null, "Red");
+						model.set(row, col, '\u0020'); // \u0020 is a blank
+					}
+					// Yellow Spider
+					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003D')
+					{
+						JOptionPane.showMessageDialog(null, "Yellow");
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 					}
 
@@ -139,7 +204,6 @@ public class GameRunner implements KeyListener
 						// removes block in front of the character
 						model.set(row, col, '\u0020'); // \u0020 is a blank
 					    JOptionPane.showMessageDialog(null, "Item Destroyed");
-
 					}
 	        	}
 	        	else
@@ -148,8 +212,6 @@ public class GameRunner implements KeyListener
 	        	}
 			}
 			return false; //Can't move
-
-
 		}
 	}
 
