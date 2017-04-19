@@ -17,8 +17,13 @@ public class GameRunner implements KeyListener
 	private int currentCol;
 	private int maxHealth = 20;
 	private int maxStrength = 5;
+	private int maxSpiderHealth = 10;
 	private int playerHealth = 20;
 	private int playerStrength = 5;
+	private int spiderHealth = 10;
+	private int spiderStrength = 3;
+	private boolean hasSword = false;
+	private double healthPotion = 0.0;
 
 	public GameRunner() throws Exception
 	{
@@ -100,7 +105,25 @@ public class GameRunner implements KeyListener
         else if(e.getKeyCode() == KeyEvent.VK_S)
         {
         	//- Display Player Stats in a popup.
-        	JOptionPane.showMessageDialog(null, "Player Stats: \n\tHealth: " + playerHealth + "/" + maxHealth + "\n\tStrength: " + playerStrength + "/" + maxStrength);
+        	JOptionPane.showMessageDialog(null, "Player Stats: \n\tHealth: " + playerHealth + "/" + maxHealth + "\n\tStrength: " + playerStrength + "/" + maxStrength + "\n\tPotions: " + healthPotion);
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_H)
+        {
+        	//- Use health Potion if there is a whole one available.
+        	if (healthPotion > 0.99 && playerHealth < maxHealth)
+        	{
+        		playerHealth = maxHealth;
+        		healthPotion -= 1.00;
+        	}
+        	else if (healthPotion < 1.00)
+        	{
+        		JOptionPane.showMessageDialog(null, "You have no potions. Go kill more spiders!");
+        	}
+        	else if (playerHealth == maxHealth)
+        	{
+        		JOptionPane.showMessageDialog(null, "You have full health! Why do you want to waste a potion?! Come back when you are hurt!");
+        	}
+        	
         }
         else
         {
@@ -133,15 +156,17 @@ public class GameRunner implements KeyListener
 					if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0031')
 					{
 					    JOptionPane.showMessageDialog(null, "For some reason you're stronger now. Good for you!");
-					    maxHealth += 2;
-						model.set(row, col, '\u0020'); // // removes block
+					    hasSword = true;
+					    //- iHasSword();
+					    //- maxHealth += 2;
+						model.set(row, col, '0'); // // removes block
 					}
 
 					// if the block is a Question Mark
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0032')
 					{
 					    JOptionPane.showMessageDialog(null, "This is a tip of sorts");
-						model.set(row, col, '\u0020'); // \u0020 is a blank
+						model.set(row, col, '0'); // \u0020 is a blank
 					}
 
 					// Bomb Block
@@ -150,7 +175,7 @@ public class GameRunner implements KeyListener
 						JOptionPane.showMessageDialog(null, "You are da bomb... No wait you were hit by it. You take 4 damage");
 						playerHealth -= 4;
 						amIAlive(playerHealth);
-						model.set(row, col, '\u0020'); // \u0020 is a blank
+						model.set(row, col, '0'); // \u0020 is a blank
 
 					}
 
@@ -158,81 +183,176 @@ public class GameRunner implements KeyListener
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0034')
 					{
 						// Deletes all blocks in a nearby radius
-						JOptionPane.showMessageDialog(null, "You've found a health bomb. Your health has been fully replenished.");
-						playerHealth = maxHealth;
-						model.set(row, col, '\u0020'); // \u0020 is a blank
+						JOptionPane.showMessageDialog(null, "Oh no! The spiders have mutated with the radiation! Watch out!");
+						maxSpiderHealth += 5;
+						spiderStrength += 2;
+						model.set(row, col, '0'); // \u0020 is a blank
 					}
 					// Black Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0036')
 					{
-						JOptionPane.showMessageDialog(null, "Black enemy defeated, but sadly you took 2 damage right at the end of the battle!");
-						playerHealth -= 2;
+						playerHealth -= spiderStrength;
+						spiderHealth -= playerStrength;
 						amIAlive(playerHealth);
-						model.set(row, col, '\u0020'); // \u0020 is a blank
+						if (spiderHealth <= 0)
+						{
+							//- Spider is dead
+							model.set(row, col, '\u0020'); // \u0020 is a blank
+							spiderHealth = maxSpiderHealth;
+							healthPotion += 0.5;
+							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						}
+						
 					}
 					// Blue Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0037')
 					{
-						JOptionPane.showMessageDialog(null, "Blue enemy defeated, but sadly you took 2 damage right at the end of the battle!");
-						playerHealth -= 2;
+						JOptionPane.showMessageDialog(null, "Blue spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						playerHealth -= spiderStrength;
+						spiderHealth -= playerStrength;
 						amIAlive(playerHealth);
-						model.set(row, col, '\u0020'); // \u0020 is a blank
+						if (spiderHealth <= 0)
+						{
+							//- Spider is dead
+							model.set(row, col, '\u0020'); // \u0020 is a blank
+							spiderHealth = maxSpiderHealth;
+							healthPotion += 0.5;
+							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						}
 					}
 					// Brown Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0038')
 					{
-						JOptionPane.showMessageDialog(null, "Brown enemy defeated, but sadly you took 2 damage right at the end of the battle!");
-						playerHealth -= 2;
+						JOptionPane.showMessageDialog(null, "Brown spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						playerHealth -= spiderStrength;
+						spiderHealth -= playerStrength;
 						amIAlive(playerHealth);
-						model.set(row, col, '\u0020'); // \u0020 is a blank
+						if (spiderHealth <= 0)
+						{
+							//- Spider is dead
+							model.set(row, col, '\u0020'); // \u0020 is a blank
+							spiderHealth = maxSpiderHealth;
+							healthPotion += 0.5;
+							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						}
 					}
 					// Green Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0039')
 					{
-						JOptionPane.showMessageDialog(null, "Green enemy defeated, but sadly you took 2 damage right at the end of the battle!");
-						playerHealth -= 2;
+						JOptionPane.showMessageDialog(null, "Green spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						playerHealth -= spiderStrength;
+						spiderHealth -= playerStrength;
 						amIAlive(playerHealth);
-						model.set(row, col, '\u0020'); // \u0020 is a blank
+						if (spiderHealth <= 0)
+						{
+							//- Spider is dead
+							model.set(row, col, '\u0020'); // \u0020 is a blank
+							spiderHealth = maxSpiderHealth;
+							healthPotion += 0.5;
+							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						}
 					}
 					// Grey Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003A')
 					{
-						JOptionPane.showMessageDialog(null, "Grey enemy defeated, but sadly you took 2 damage right at the end of the battle!");
-						playerHealth -= 2;
+						playerHealth -= spiderStrength;
+						spiderHealth -= playerStrength;
 						amIAlive(playerHealth);
-						model.set(row, col, '\u0020'); // \u0020 is a blank
+						if (spiderHealth <= 0)
+						{
+							//- Spider is dead
+							model.set(row, col, '\u0020'); // \u0020 is a blank
+							spiderHealth = maxSpiderHealth;
+							healthPotion += 0.5;
+							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Grey spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						}
 					}
 					// Orange Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003B')
 					{
-						JOptionPane.showMessageDialog(null, "Orange enemy defeated, but sadly you took 2 damage right at the end of the battle!");
-						playerHealth -= 2;
+						playerHealth -= spiderStrength;
+						spiderHealth -= playerStrength;
 						amIAlive(playerHealth);
-						model.set(row, col, '\u0020'); // \u0020 is a blank
+						if (spiderHealth <= 0)
+						{
+							//- Spider is dead
+							model.set(row, col, '\u0020'); // \u0020 is a blank
+							spiderHealth = maxSpiderHealth;
+							healthPotion += 0.5;
+							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Orange spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						}
 					}
 					// Red Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003C')
 					{
-						JOptionPane.showMessageDialog(null, "Red enemy defeated, but sadly you took 2 damage right at the end of the battle!");
-						playerHealth -= 2;
+						playerHealth -= spiderStrength;
+						spiderHealth -= playerStrength;
 						amIAlive(playerHealth);
-						model.set(row, col, '\u0020'); // \u0020 is a blank
+						if (spiderHealth <= 0)
+						{
+							//- Spider is dead
+							model.set(row, col, '\u0020'); // \u0020 is a blank
+							spiderHealth = maxSpiderHealth;
+							healthPotion += 0.5;
+							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Red spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						}
 					}
 					// Yellow Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u003D')
 					{
-						JOptionPane.showMessageDialog(null, "Yellow enemy defeated, but sadly you took 2 damage right at the end of the battle!");
-						playerHealth -= 2;
+						playerHealth -= spiderStrength;
+						spiderHealth -= playerStrength;
 						amIAlive(playerHealth);
-						model.set(row, col, '\u0020'); // \u0020 is a blank
+						if (spiderHealth <= 0)
+						{
+							//- Spider is dead
+							model.set(row, col, '\u0020'); // \u0020 is a blank
+							spiderHealth = maxSpiderHealth;
+							healthPotion += 0.5;
+							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Yellow spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						}
 					}
 
 					else
 					{
 						// removes block in front of the character
-						model.set(row, col, '\u0020'); // \u0020 is a blank
-					    JOptionPane.showMessageDialog(null, "Item Destroyed");
+						//model.set(row, col, '\u0020'); // \u0020 is a blank
+					    JOptionPane.showMessageDialog(null, "This is just a plain old hedge, why would you try to interact with a hedge?");
 					}
+					
+					iHasSword();
 	        	}
 	        	else
 	        	{
@@ -245,6 +365,19 @@ public class GameRunner implements KeyListener
 		}//- End of outer if/else
 	}//- End of isValidMove()
 	
+	private void iHasSword()
+	{
+		//- When the player moves, after interacting with a block, this method is called to check if the player found a Sword.
+		//- If they did the boolean variable hasSword was set to true, then this if statement is run.
+		if (hasSword)
+		{
+			//- 2 Strength is added to the player and hasSword is set to false, this lets the player find multiple swords.
+			maxStrength += 2;
+			playerStrength = maxStrength;
+			hasSword = false;
+		}//- End of if
+	}//- End of iHasSword
+
 	private boolean amIAlive(int health) 
 	{
 		if (health > 0)
