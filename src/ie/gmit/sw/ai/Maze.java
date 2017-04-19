@@ -86,6 +86,12 @@ public class Maze
 		this.maze[row][col] = c;
 	}//- End of set()
 
+	// sets the location of enemies
+	public void setEnemy(int eRow, int eCol, char e)
+	{
+		this.maze[eRow][eCol] = e;
+	}
+
 	public int size(){
 		return this.maze.length;
 	}//- End of size()

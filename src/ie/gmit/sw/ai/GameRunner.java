@@ -123,7 +123,7 @@ public class GameRunner implements KeyListener
         	{
         		JOptionPane.showMessageDialog(null, "You have full health! Why do you want to waste a potion?! Come back when you are hurt!");
         	}
-        	
+
         }
         else
         {
@@ -139,6 +139,7 @@ public class GameRunner implements KeyListener
 
 	private boolean isValidMove(int row, int col)
 	{
+
 		if (row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == ' ')
 		{
 			model.set(currentRow, currentCol, '\u0020'); // places a space in your last position
@@ -148,8 +149,27 @@ public class GameRunner implements KeyListener
 		else
 		{
 			{
+				// Bomb Block
+				if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0033')
+				{
+					JOptionPane.showMessageDialog(null, "You are da bomb... No wait you were hit by it. You take 4 damage");
+					playerHealth -= 4;
+					amIAlive(playerHealth);
+					model.set(row, col, '0'); // \u0020 is a blank
 
-				if (JOptionPane.showConfirmDialog(null, "Do you want to Interact with this?", "WARNING",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+				}
+
+				 // H-Bomb Block
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0034')
+				{
+					// make spiders stronger
+					JOptionPane.showMessageDialog(null, "Oh no! The spiders have mutated with the radiation! Watch out!");
+					maxSpiderHealth += 5;
+					spiderStrength += 2;
+					model.set(row, col, '0'); // \u0020 is a blank
+				}
+
+				else if (JOptionPane.showConfirmDialog(null, "Do you want to Interact with this?", "WARNING",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 	        	{
 	        	    // yes option
 					// if the block is a Sword
@@ -169,25 +189,8 @@ public class GameRunner implements KeyListener
 						model.set(row, col, '0'); // \u0020 is a blank
 					}
 
-					// Bomb Block
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0033')
-					{
-						JOptionPane.showMessageDialog(null, "You are da bomb... No wait you were hit by it. You take 4 damage");
-						playerHealth -= 4;
-						amIAlive(playerHealth);
-						model.set(row, col, '0'); // \u0020 is a blank
 
-					}
 
-					 // H-Bomb Block
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0034')
-					{
-						// Deletes all blocks in a nearby radius
-						JOptionPane.showMessageDialog(null, "Oh no! The spiders have mutated with the radiation! Watch out!");
-						maxSpiderHealth += 5;
-						spiderStrength += 2;
-						model.set(row, col, '0'); // \u0020 is a blank
-					}
 					// Black Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0036')
 					{
@@ -202,11 +205,11 @@ public class GameRunner implements KeyListener
 							healthPotion += 0.5;
 							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
 						}
-						else 
+						else
 						{
 							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						}
-						
+
 					}
 					// Blue Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0037')
@@ -223,7 +226,7 @@ public class GameRunner implements KeyListener
 							healthPotion += 0.5;
 							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
 						}
-						else 
+						else
 						{
 							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						}
@@ -243,7 +246,7 @@ public class GameRunner implements KeyListener
 							healthPotion += 0.5;
 							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
 						}
-						else 
+						else
 						{
 							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						}
@@ -263,7 +266,7 @@ public class GameRunner implements KeyListener
 							healthPotion += 0.5;
 							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
 						}
-						else 
+						else
 						{
 							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						}
@@ -282,7 +285,7 @@ public class GameRunner implements KeyListener
 							healthPotion += 0.5;
 							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
 						}
-						else 
+						else
 						{
 							JOptionPane.showMessageDialog(null, "Grey spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						}
@@ -301,7 +304,7 @@ public class GameRunner implements KeyListener
 							healthPotion += 0.5;
 							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
 						}
-						else 
+						else
 						{
 							JOptionPane.showMessageDialog(null, "Orange spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						}
@@ -320,7 +323,7 @@ public class GameRunner implements KeyListener
 							healthPotion += 0.5;
 							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
 						}
-						else 
+						else
 						{
 							JOptionPane.showMessageDialog(null, "Red spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						}
@@ -339,7 +342,7 @@ public class GameRunner implements KeyListener
 							healthPotion += 0.5;
 							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
 						}
-						else 
+						else
 						{
 							JOptionPane.showMessageDialog(null, "Yellow spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						}
@@ -351,7 +354,7 @@ public class GameRunner implements KeyListener
 						//model.set(row, col, '\u0020'); // \u0020 is a blank
 					    JOptionPane.showMessageDialog(null, "This is just a plain old hedge, why would you try to interact with a hedge?");
 					}
-					
+
 					iHasSword();
 	        	}
 	        	else
@@ -364,7 +367,7 @@ public class GameRunner implements KeyListener
 
 		}//- End of outer if/else
 	}//- End of isValidMove()
-	
+
 	private void iHasSword()
 	{
 		//- When the player moves, after interacting with a block, this method is called to check if the player found a Sword.
@@ -378,7 +381,7 @@ public class GameRunner implements KeyListener
 		}//- End of if
 	}//- End of iHasSword
 
-	private boolean amIAlive(int health) 
+	private boolean amIAlive(int health)
 	{
 		if (health > 0)
 		{
