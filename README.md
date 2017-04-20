@@ -14,11 +14,11 @@ You are required to create a simple maze-based game in which the characters are 
 
 ### To do list:
 - Add Neural Network to control spiders. (25%)
-- Add fuzzy logic. (25%)
 - Figure out AI Search Characters.(20%)
 - Add ExecutorService, Thread pool to thread the caracters. (10%)
-- Add strength and health points calculations to the fight interaction.
 
 ## References:
 1. [Pop-up Yes/No option textboxes](http://stackoverflow.com/questions/8689122/joptionpane-yes-no-options-confirm-dialog-box-issue-java)
 1. [Changing the node colour from a different class](http://stackoverflow.com/questions/8259127/changing-color-of-a-java-graphic-object)
+1. [JFuzzyLogic Documentation](http://jfuzzylogic.sourceforge.net/html/manual.html)
+
