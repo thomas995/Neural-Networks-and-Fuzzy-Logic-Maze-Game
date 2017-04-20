@@ -1,8 +1,8 @@
-FUNCTION_BLOCK gameLogic
+FUNCTION_BLOCK fuzzyMaze
 
 	VAR_INPUT 
 			playerStrength : REAL; 		//- Player's Strength
-			spiderStrength : REAL	//- Spider's Strength
+			spiderStrength : REAL;	//- Spider's Strength
 			playerHealth : REAL;	//- Player's Health
 			spiderHealth : REAL;   //- Spider's Health
 	END_VAR

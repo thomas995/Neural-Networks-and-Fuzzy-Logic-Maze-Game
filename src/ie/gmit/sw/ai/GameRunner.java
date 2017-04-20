@@ -7,6 +7,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+import ie.gmit.sw.ai.nn.activator.Activator;
+import net.sourceforge.jFuzzyLogic.FIS;
+import net.sourceforge.jFuzzyLogic.FunctionBlock;
+import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
+import net.sourceforge.jFuzzyLogic.rule.Variable;
+
 public class GameRunner implements KeyListener
 {
 	private static final int MAZE_DIMENSION = 100;
@@ -25,6 +31,21 @@ public class GameRunner implements KeyListener
 	private boolean hasSword = false;
 	private double healthPotion = 0.0;
 
+	
+	
+/*	private double[][] data = { //playerHealth, playerStrength, spiderHealth, spiderStrength
+			{ 20, 5, 10, 3 }, { 2, 0, 0, 1 }, { 2, 0, 1, 1 }, { 2, 0, 1, 2 }, { 2, 1, 0, 2 },
+			{ 2, 1, 0, 1 }, { 1, 0, 0, 0 }, { 1, 0, 0, 1 }, { 1, 0, 1, 1 }, { 1, 0, 1, 2 }, 
+			{ 1, 1, 0, 2 }, { 1, 1, 0, 1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 1 }, { 0, 0, 1, 1 }, 
+			{ 0, 0, 1, 2 }, { 0, 1, 0, 2 }, { 0, 1, 0, 1 } };
+
+	private double[][] expected = { //Panic, Attack, Hide, Run
+			{ 0.0, 0.0, 1.0, 0.0 }, { 0.0, 0.0, 1.0, 0.0 }, { 1.0, 0.0, 0.0, 0.0 }, { 1.0, 0.0, 0.0, 0.0 }, 
+			{ 0.0, 0.0, 0.0, 1.0 }, { 1.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 1.0, 0.0 }, { 0.0, 0.0, 0.0, 1.0 }, 
+			{ 1.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 }, 
+			{ 0.0, 0.0, 1.0, 0.0 }, { 0.0, 0.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 }, { 0.0, 1.0, 0.0, 0.0 }, 
+			{ 0.0, 1.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 1.0 } };*/
+	
 	public GameRunner() throws Exception
 	{
 
@@ -77,22 +98,30 @@ public class GameRunner implements KeyListener
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && currentCol < MAZE_DIMENSION - 1)
         {
         	if (isValidMove(currentRow, currentCol + 1))
+        	{
         		currentCol++; //- Move Spartian Right
+        	}
         }
         else if (e.getKeyCode() == KeyEvent.VK_LEFT && currentCol > 0)
         {
         	if (isValidMove(currentRow, currentCol - 1))
+        	{
         		currentCol--; //- Move Spartian Left
+        	}
         }
         else if (e.getKeyCode() == KeyEvent.VK_UP && currentRow > 0)
         {
         	if (isValidMove(currentRow - 1, currentCol))
+        	{
         		currentRow--; //- Move Spartian Forward/Up
+        	}
         }
         else if (e.getKeyCode() == KeyEvent.VK_DOWN && currentRow < MAZE_DIMENSION - 1)
         {
         	if (isValidMove(currentRow + 1, currentCol))
+        	{
         		currentRow++; //- Move Spartian Backward/Down
+        	}
         }
         else if (e.getKeyCode() == KeyEvent.VK_Z)
         {
@@ -112,6 +141,7 @@ public class GameRunner implements KeyListener
         	//- Use health Potion if there is a whole one available.
         	if (healthPotion > 0.99 && playerHealth < maxHealth)
         	{
+        		JOptionPane.showMessageDialog(null, "You used a potion and recovered your health. \nCongrats on being slightly intelligent and not underestimating the spiders strength!");
         		playerHealth = maxHealth;
         		healthPotion -= 1.00;
         	}
@@ -211,7 +241,6 @@ public class GameRunner implements KeyListener
 					// Blue Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0037')
 					{
-						JOptionPane.showMessageDialog(null, "Blue spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						playerHealth -= spiderStrength;
 						spiderHealth -= playerStrength;
 						amIAlive(playerHealth);
@@ -225,13 +254,12 @@ public class GameRunner implements KeyListener
 						}
 						else 
 						{
-							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+							JOptionPane.showMessageDialog(null, "Blue spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						}
 					}
 					// Brown Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0038')
 					{
-						JOptionPane.showMessageDialog(null, "Brown spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						playerHealth -= spiderStrength;
 						spiderHealth -= playerStrength;
 						amIAlive(playerHealth);
@@ -245,13 +273,12 @@ public class GameRunner implements KeyListener
 						}
 						else 
 						{
-							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+							JOptionPane.showMessageDialog(null, "Brown spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						}
 					}
 					// Green Spider
 					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col) == '\u0039')
 					{
-						JOptionPane.showMessageDialog(null, "Green spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						playerHealth -= spiderStrength;
 						spiderHealth -= playerStrength;
 						amIAlive(playerHealth);
@@ -265,7 +292,7 @@ public class GameRunner implements KeyListener
 						}
 						else 
 						{
-							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+							JOptionPane.showMessageDialog(null, "Green spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 						}
 					}
 					// Grey Spider
@@ -373,11 +400,13 @@ public class GameRunner implements KeyListener
 		{
 			//- 2 Strength is added to the player and hasSword is set to false, this lets the player find multiple swords.
 			maxStrength += 2;
+			maxHealth += 5;
+			playerHealth += 5;
 			playerStrength = maxStrength;
 			hasSword = false;
 		}//- End of if
 	}//- End of iHasSword
-
+	
 	private boolean amIAlive(int health) 
 	{
 		if (health > 0)
@@ -391,7 +420,7 @@ public class GameRunner implements KeyListener
 			return false;
 		}//- End of if/else
 	}//- End of amIAlive()
-
+	
 	private Sprite[] getSprites() throws Exception
 	{
 		//Read in the images from the resources directory as sprites. Note that each
@@ -415,10 +444,59 @@ public class GameRunner implements KeyListener
 		return sprites;
 	}//- End of getSprites()
 
+/*	private void makeSpidersMove() throws Exception
+	{
+		//- Add code from Lab6-BackPropNN GameRunner class.
+		double[] params = {playerHealth, playerStrength, spiderHealth, spiderStrength};
+		
+		NeuralNetwork nn = new NeuralNetwork(Activator.ActivationFunction.Sigmoid, 4, 3, 4);
+        Trainator trainer = new BackpropagationTrainer(nn); 
+        trainer.train(data, expected, 0.01, 1000000);
+        
+        double[] result = nn.process(params);
+        //System.out.println("==>" + (Utils.getMaxIndex(result) + 1));
+        
+        int output = (Utils.getMaxIndex(result) +1);
+        switch(output){
+	        case 1:
+	        	//- Make spiders move left
+	        	//panic();
+	        	break;
+	        case 2:
+	        	//- Make spiders move right
+	        	//attack();
+	        	break;
+	        case 3:
+	        	//- Make spiders move up
+	        	//hide();
+	        	break;
+	        default:
+	        	//- Make spiders move down
+	        	//runAway();
+        }//- End of Switch
+        
+	}//- End of makeSpidersMove() */
+	
 	public static void main(String[] args) throws Exception
 	{
 		new GameRunner();
 
+		FIS fis = FIS.load("fcl/Maze.fcl", true); //Load and parse the FCL 
+		FunctionBlock fb = fis.getFunctionBlock("fuzzyMaze");
+		JFuzzyChart.get().chart(fb);
+		//fis.chart(); //Display the linguistic variables and terms 
+		fis.setVariable("playerStrength", 7); //Apply a value to variables 
+		fis.setVariable("spiderStrength", 5);
+		fis.setVariable("playerHealth", 24); 
+		fis.setVariable("spiderHealth", 15);
+		fis.evaluate(); //Execute the fuzzy inference engine 
 
+		Variable maze = fb.getVariable("killability");
+		//JFuzzyChart.get.chart(tip, tip.getDefuzzifier(), true);
+		JFuzzyChart.get().chart(maze.getDefuzzifier(), "Crisp Output", true);
+		
+		System.out.println(maze.defuzzify());
+		//System.out.println(fis.getVariable("risk").getValue()); //Output end result
+		
 	}//- End of main()
 }//- End of GameRunner
