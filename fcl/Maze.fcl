@@ -1,0 +1,61 @@
+FUNCTION_BLOCK fuzzyMaze
+
+	VAR_INPUT 
+			playerStrength : REAL; 		//- Player's Strength
+			spiderStrength : REAL;	//- Spider's Strength
+			playerHealth : REAL;	//- Player's Health
+			spiderHealth : REAL;   //- Spider's Health
+	END_VAR
+	
+	VAR_OUTPUT 
+			killability : REAL;  	//- The likelihood of killing or being killed.
+	END_VAR
+	
+	// Fuzzify input variable 'playerStrength': { 'weak', 'average', 'strong' }
+	FUZZIFY playerStrength
+			TERM weak := (0, 1) (10, 0);
+			TERM average := trian 5 10 15;
+			TERM strong := (10, 0) (20, 1);
+	END_FUZZIFY
+	
+	// Fuzzify input variable 'spiderStrength': { 'weak', 'average', 'strong' }
+	FUZZIFY spiderStrength
+			TERM weak := (0, 1) (8, 0);
+			TERM average := trian 3 8 13;
+			TERM strong := (8, 0) (16, 1);
+	END_FUZZIFY
+	
+	// Fuzzify input variable 'playerHealth': { 'low', 'mid', 'high' }
+	FUZZIFY playerHealth
+			TERM low := (0, 1) (5, 1) (10, 0);
+			TERM mid := (5, 0) (10, 1) (15, 1) (20, 0);
+			TERM high := (15, 0) (20, 1) (40, 1);
+	END_FUZZIFY
+	
+	// Fuzzify input variable 'spiderHealth': { 'low', 'mid', 'high' }
+	FUZZIFY spiderHealth
+			TERM low := (0, 1) (5, 1) (7.5, 0);
+			TERM mid := trian 5 7.5 10;
+			TERM high := (7.5, 0) (10, 1) (20, 1);
+	END_FUZZIFY
+	
+	// Defuzzify output variable 'killability' : {'likely', 'moderate', 'unlikely' }
+	DEFUZZIFY killability
+			TERM likely := (0, 1) (40, 0);
+			TERM moderate := trian 30.0 50.0 70.0; 
+			TERM unlikely := (60, 0) (100, 1); 
+			METHOD : COG;
+			DEFAULT := 0;
+	END_DEFUZZIFY
+	
+	RULEBLOCK No1
+			AND : MIN;	// Use 'min' for 'and'
+			ACT : MIN;	// Use 'min' activation method
+			ACCU : MAX;	// Use 'max' accumulation method
+			
+			RULE 1 : IF playerHealth IS high THEN killability IS unlikely;
+			RULE 2 : IF playerHealth IS mid OR spiderStrength IS NOT strong THEN killability IS moderate;
+			RULE 3 : IF playerStrength IS strong OR spiderHealth IS low THEN killability IS likely;
+			RULE 4 : IF playerStrength IS strong AND playerHealth IS high THEN killability IS unlikely;
+	END_RULEBLOCK
+END_FUNCTION_BLOCK
