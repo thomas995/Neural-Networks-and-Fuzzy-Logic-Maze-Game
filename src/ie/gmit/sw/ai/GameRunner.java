@@ -27,6 +27,7 @@ public class GameRunner implements KeyListener{
 	private int spiderStrength = 3;
 	private boolean hasSword = false;
 	private double healthPotion = 0.0;
+	private int killsLeft = 15;
 	private EnemyMovement ms;
 
 	public GameRunner() throws Exception
@@ -129,250 +130,332 @@ public class GameRunner implements KeyListener{
 	public void keyTyped(KeyEvent e) {} //Ignore
 
 
-	private boolean isValidMove(int row, int col)
-	{
-		if (row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == -1)
-		{
+	private boolean isValidMove(int row, int col){
+		if (row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == -1){
 			model.set(currentRow, currentCol, new Node(currentRow, currentCol, -1));
 			model.set(row, col, new Node(row, col, 5));
 			return true;
-		}else
-		{
-			{
-				if (JOptionPane.showConfirmDialog(null, "Do you want to Interact with this?", "WARNING",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-	        	{
-	        	    // yes option
-					// if the block is a Sword
-					if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 1)
+		}else{
+			if (JOptionPane.showConfirmDialog(null, "Do you want to Interact with this?", "WARNING",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+        	{
+        	    // yes option
+				// if the block is a Sword
+				if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 1)
+				{
+					//- increases player's health and strength.
+				    JOptionPane.showMessageDialog(null, "For some reason you're stronger now. Good for you!");
+				    hasSword = true;
+				    //- iHasSword();
+				    //- maxHealth += 2;
+					model.set(row, col, new Node(row, col, 0)); // 0 is a hedge
+				}//- Sword infront of player
+
+				// if the block is a Question Mark
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 2)
+				{
+					//- Gives the player a general hint.
+				    JOptionPane.showMessageDialog(null, "Hello Adventurer! \nOur town has been overrun with massive spiders, \nplease help eradicate some of these large pests. \nKill " + killsLeft + " spiders to win! \n\n\t\t\tCheck your stats by pressing the 'S' key. \n\t\t\tPress the 'H' key to use a health potion. \n\t\t\tTo quit, press the 'Esc' key. \n\n\t\t\t\t                    Good Luck!!");
+					model.set(row, col, new Node(row, col, 0)); // 0 is a hedge
+				}//- ? Block infront of player
+
+				// Bomb Block
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 3)
+				{
+					//- Removes some health from player
+					JOptionPane.showMessageDialog(null, "You da bomb!!! \n...No wait, you were hit by it. \nSucks to be you. \nYou take 4 damage");
+					playerHealth -= 4;
+					amIAlive(playerHealth);
+					model.set(row, col, new Node(row, col, 0)); // 0 is a hedge
+
+				}//- Bomb infront of player
+
+				 // H-Bomb Block
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 4)
+				{
+					// Makes all spiders stronger, and have more health.
+					JOptionPane.showMessageDialog(null, "Oh no! The spiders have mutated with the radiation! Watch out!");
+					maxSpiderHealth += 5;
+					spiderStrength += 2;
+					model.set(row, col, new Node(row, col, 0)); // 0 is a hedge
+				}//- H-Bomb infront of player
+				// Black Spider
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 6)
+				{
+					playerHealth -= spiderStrength;
+					spiderHealth -= playerStrength;
+					amIAlive(playerHealth);
+					if (spiderHealth <= 0)
 					{
-					    JOptionPane.showMessageDialog(null, "For some reason you're stronger now. Good for you!");
-					    hasSword = true;
-					    //- iHasSword();
-					    //- maxHealth += 2;
-						model.set(row, col, new Node(row, col, 0)); // 0 is a hedge
+						//- Spider is dead
+						model.set(row, col, new Node(row, col, -1)); // -1 is a blank
+						//- Delete node, don't make it invisible, Or stop the spider moving.
+						
+						spiderHealth = maxSpiderHealth;
+						healthPotion += 0.5;
+						if (killsLeft > 0) 
+						{
+							killsLeft--;
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Thank you Adventurer! You saved our town!");
+							System.exit(0);
+						}
+						JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-
-					// if the block is a Question Mark
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 2)
+					else 
 					{
-					    JOptionPane.showMessageDialog(null, "This is a tip of sorts");
-						model.set(row, col, new Node(row, col, 0)); // 0 is a hedge
+						JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
 					}
-
-					// Bomb Block
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 3)
+					
+				}//- Black Spider infront of player
+				// Blue Spider
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 7)
+				{
+					playerHealth -= spiderStrength;
+					spiderHealth -= playerStrength;
+					amIAlive(playerHealth);
+					if (spiderHealth <= 0)
 					{
-						JOptionPane.showMessageDialog(null, "You da bomb!!! \n...No wait, you were hit by it. \nSucks to be you. \nYou take 4 damage");
-						playerHealth -= 4;
-						amIAlive(playerHealth);
-						model.set(row, col, new Node(row, col, 0)); // 0 is a hedge
-
+						//- Spider is dead
+						model.set(row, col, new Node(row, col, -1)); // -1 is a blank
+						//- Delete node, don't make it invisible, Or stop the spider moving.
+						
+						spiderHealth = maxSpiderHealth;
+						healthPotion += 0.5;
+						if (killsLeft > 0) 
+						{
+							killsLeft--;
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Thank you Adventurer! You saved our town!");
+							System.exit(0);
+						}
+						JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
 					}
-
-					 // H-Bomb Block
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 4)
+					else 
 					{
-						// Deletes all blocks in a nearby radius
-						JOptionPane.showMessageDialog(null, "Oh no! The spiders have mutated with the radiation! Watch out!");
-						maxSpiderHealth += 5;
-						spiderStrength += 2;
-						model.set(row, col, new Node(row, col, 0)); // 0 is a hedge
+						JOptionPane.showMessageDialog(null, "Blue spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-					// Black Spider
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 6)
+				}//- Blue Spider infront of player
+				// Brown Spider
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 8)
+				{
+					playerHealth -= spiderStrength;
+					spiderHealth -= playerStrength;
+					amIAlive(playerHealth);
+					if (spiderHealth <= 0)
 					{
-						playerHealth -= spiderStrength;
-						spiderHealth -= playerStrength;
-						amIAlive(playerHealth);
-						if (spiderHealth <= 0)
+						//- Spider is dead
+						model.set(row, col, new Node(row, col, -1)); // -1 is a blank
+						//- Delete node, don't make it invisible, Or stop the spider moving.
+						
+						spiderHealth = maxSpiderHealth;
+						healthPotion += 0.5;
+						if (killsLeft > 0) 
 						{
-							//- Spider is dead
-							model.set(row, col, new Node(row, col, -1)); // -1 is a blank
-							//- Delete node, don't make it invisible, Or stop the spider moving.
-
-							spiderHealth = maxSpiderHealth;
-							healthPotion += 0.5;
-
-							//ms.isDead = true;
-							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+							killsLeft--;
 						}
-						else
+						else 
 						{
-							JOptionPane.showMessageDialog(null, "Black spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+							JOptionPane.showMessageDialog(null, "Thank you Adventurer! You saved our town!");
+							System.exit(0);
 						}
-
+						JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-					// Blue Spider
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 7)
+					else 
 					{
-						playerHealth -= spiderStrength;
-						spiderHealth -= playerStrength;
-						amIAlive(playerHealth);
-						if (spiderHealth <= 0)
-						{
-							//- Spider is dead
-							model.set(row, col, new Node(row, col, -1)); // -1 is a blank
-							//- Delete node, don't make it invisible, Or stop the spider moving.
-
-							spiderHealth = maxSpiderHealth;
-							healthPotion += 0.5;
-							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, "Blue spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
-						}
+						JOptionPane.showMessageDialog(null, "Brown spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-					// Brown Spider
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 8)
+				}//- Brown Spider infront of player
+				// Green Spider
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 9)
+				{
+					playerHealth -= spiderStrength;
+					spiderHealth -= playerStrength;
+					amIAlive(playerHealth);
+					if (spiderHealth <= 0)
 					{
-						playerHealth -= spiderStrength;
-						spiderHealth -= playerStrength;
-						amIAlive(playerHealth);
-						if (spiderHealth <= 0)
+						//- Spider is dead
+						model.set(row, col, new Node(row, col, -1)); // -1 is a blank
+						//- Delete node, don't make it invisible, Or stop the spider moving.
+						
+						spiderHealth = maxSpiderHealth;
+						healthPotion += 0.5;
+						if (killsLeft > 0) 
 						{
-							//- Spider is dead
-							model.set(row, col, new Node(row, col, -1)); // -1 is a blank
-							//- Delete node, don't make it invisible, Or stop the spider moving.
-
-							spiderHealth = maxSpiderHealth;
-							healthPotion += 0.5;
-							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+							killsLeft--;
 						}
-						else
+						else 
 						{
-							JOptionPane.showMessageDialog(null, "Brown spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+							JOptionPane.showMessageDialog(null, "Thank you Adventurer! You saved our town!");
+							System.exit(0);
 						}
+						JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-					// Green Spider
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 9)
+					else 
 					{
-						playerHealth -= spiderStrength;
-						spiderHealth -= playerStrength;
-						amIAlive(playerHealth);
-						if (spiderHealth <= 0)
-						{
-							//- Spider is dead
-							model.set(row, col, new Node(row, col, -1)); // -1 is a blank
-							//- Delete node, don't make it invisible, Or stop the spider moving.
-
-							spiderHealth = maxSpiderHealth;
-							healthPotion += 0.5;
-							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, "Green spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
-						}
+						JOptionPane.showMessageDialog(null, "Green spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-					// Grey Spider
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 10)
+				}//- Green Spider infront of player
+				// Grey Spider
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 10)
+				{
+					playerHealth -= spiderStrength;
+					spiderHealth -= playerStrength;
+					amIAlive(playerHealth);
+					if (spiderHealth <= 0)
 					{
-						playerHealth -= spiderStrength;
-						spiderHealth -= playerStrength;
-						amIAlive(playerHealth);
-						if (spiderHealth <= 0)
+						//- Spider is dead
+						model.set(row, col, new Node(row, col, -1)); // -1 is a blank
+						//- Delete node, don't make it invisible, Or stop the spider moving.
+						
+						spiderHealth = maxSpiderHealth;
+						healthPotion += 0.5;
+						if (killsLeft > 0) 
 						{
-							//- Spider is dead
-							model.set(row, col, new Node(row, col, -1)); // -1 is a blank
-							//- Delete node, don't make it invisible, Or stop the spider moving.
-
-							spiderHealth = maxSpiderHealth;
-							healthPotion += 0.5;
-							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+							killsLeft--;
 						}
-						else
+						else 
 						{
-							JOptionPane.showMessageDialog(null, "Grey spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+							JOptionPane.showMessageDialog(null, "Thank you Adventurer! You saved our town!");
+							System.exit(0);
 						}
+						JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-					// Orange Spider
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 11)
+					else 
 					{
-						playerHealth -= spiderStrength;
-						spiderHealth -= playerStrength;
-						amIAlive(playerHealth);
-						if (spiderHealth <= 0)
-						{
-							//- Spider is dead
-							model.set(row, col, new Node(row, col, -1)); // -1 is a blank
-							//- Delete node, don't make it invisible, Or stop the spider moving.
-
-							spiderHealth = maxSpiderHealth;
-							healthPotion += 0.5;
-							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, "Orange spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
-						}
+						JOptionPane.showMessageDialog(null, "Grey spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-					// Red Spider
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 12)
+				}//- Grey Spider infront of player
+				// Orange Spider
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 11)
+				{
+					playerHealth -= spiderStrength;
+					spiderHealth -= playerStrength;
+					amIAlive(playerHealth);
+					if (spiderHealth <= 0)
 					{
-						playerHealth -= spiderStrength;
-						spiderHealth -= playerStrength;
-						amIAlive(playerHealth);
-						if (spiderHealth <= 0)
+						//- Spider is dead
+						model.set(row, col, new Node(row, col, -1)); // -1 is a blank
+						//- Delete node, don't make it invisible, Or stop the spider moving.
+						
+						spiderHealth = maxSpiderHealth;
+						healthPotion += 0.5;
+						if (killsLeft > 0) 
 						{
-							//- Spider is dead
-							model.set(row, col, new Node(row, col, -1)); // -1 is a blank
-							//- Delete node, don't make it invisible, Or stop the spider moving.
-
-							spiderHealth = maxSpiderHealth;
-							healthPotion += 0.5;
-							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+							killsLeft--;
 						}
-						else
+						else 
 						{
-							JOptionPane.showMessageDialog(null, "Red spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+							JOptionPane.showMessageDialog(null, "Thank you Adventurer! You saved our town!");
+							System.exit(0);
 						}
+						JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-					// Yellow Spider
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 13)
+					else 
 					{
-						playerHealth -= spiderStrength;
-						spiderHealth -= playerStrength;
-						amIAlive(playerHealth);
-						if (spiderHealth <= 0)
-						{
-							//- Spider is dead
-							model.set(row, col, new Node(row, col, -1)); // -1 is a blank
-							//- Delete node, don't make it invisible, Or stop the spider moving.
-
-							spiderHealth = maxSpiderHealth;
-							healthPotion += 0.5;
-							JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, "Yellow spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
-						}
+						JOptionPane.showMessageDialog(null, "Orange spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-					// Hedge
-					else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 0)
+				}//- Orange Spider infront of player
+				// Red Spider
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 12)
+				{
+					playerHealth -= spiderStrength;
+					spiderHealth -= playerStrength;
+					amIAlive(playerHealth);
+					if (spiderHealth <= 0)
 					{
-						//JOptionPane.showMessageDialog(null, "This is just a plain old hedge, why would you try to interact with a hedge?");
+						//- Spider is dead
+						model.set(row, col, new Node(row, col, -1)); // -1 is a blank
+						//- Delete node, don't make it invisible, Or stop the spider moving.
+						
+						spiderHealth = maxSpiderHealth;
+						healthPotion += 0.5;
+						if (killsLeft > 0) 
+						{
+							killsLeft--;
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Thank you Adventurer! You saved our town!");
+							System.exit(0);
+						}
+						JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-					else
+					else 
 					{
-						// removes block in front of the character
-						//model.set(row, col, '\u0020'); // \u0020 is a blank
-						//JOptionPane.showMessageDialog(null, "Nothing to see here. \nMove along. \nNo lollygaging.");
+						JOptionPane.showMessageDialog(null, "Red spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
 					}
-
-					iHasSword();
-	        	}
-	        	else
-	        	{
-	        	    // no option
-	        	}
-			}
-
+				}//- Red Spider infront of player
+				// Yellow Spider
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 13)
+				{
+					playerHealth -= spiderStrength;
+					spiderHealth -= playerStrength;
+					amIAlive(playerHealth);
+					if (spiderHealth <= 0)
+					{
+						//- Spider is dead
+						model.set(row, col, new Node(row, col, -1)); // -1 is a blank
+						//- Delete node, don't make it invisible, Or stop the spider moving.
+						
+						spiderHealth = maxSpiderHealth;
+						healthPotion += 0.5;
+						if (killsLeft > 0) 
+						{
+							killsLeft--;
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(null, "Thank you Adventurer! You saved our town!");
+							System.exit(0);
+						}
+						JOptionPane.showMessageDialog(null, "Congrats! You squished that arachnid and found half a health potion!");
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
+					}
+					else 
+					{
+						JOptionPane.showMessageDialog(null, "Yellow spider took " + playerStrength + " damage. \nYou took " + spiderStrength + " damage. \nSpider health is " + spiderHealth + "/" + maxSpiderHealth);
+						evaluateKillability(playerStrength, spiderStrength, playerHealth, spiderHealth);
+					}
+				}//- YellowSpider infront of player
+				// Hedge
+				else if(row <= model.size() - 1 && col <= model.size() - 1 && model.get(row, col).getId() == 0)
+				{
+					JOptionPane.showMessageDialog(null, "This is just a plain old hedge, why would you try to interact with a hedge?");
+				}//- Hedge infront of player
+				else
+				{
+					// removes block in front of the character
+					//model.set(row, col, '\u0020'); // \u0020 is a blank
+					JOptionPane.showMessageDialog(null, "Nothing to see here. \nMove along. \nNo lollygagging. ");
+				}//- End of inner if/else (Nothing infront of player)
+				//- This calls the iHasSword method to check if the player picked up a sword in the last move.
+				iHasSword();
+        	}
+        	else
+        	{
+        	    // no option
+        	}//- End of middle if/else (Do you want to interact?)
+			
 			return false; //Can't move
-		}
-	}
-
+		}//- End of outer if/else
+	}//- End of isValidMove
+	
 	private void iHasSword()
 	{
 		//- When the player moves, after interacting with a block, this method is called to check if the player found a Sword.
@@ -430,7 +513,32 @@ public class GameRunner implements KeyListener{
 		return this.spiderHealth;
 	}
 
+	private int evaluateKillability(int pS, int sS, int pH, int sH) {
+		//- Every time the player fights a spider, this method is called and prints the DeFuzzified value in the console.
+		FIS fis = FIS.load("fcl/Maze.fcl", true); //Load and parse the FCL 
+
+        FunctionBlock functionBlock = fis.getFunctionBlock("fuzzyMaze");
+        
+        fis.setVariable("playerStrength", pS);//Apply a value to all variables 
+        fis.setVariable("spiderStrength", sS);
+        fis.setVariable("playerHealth", pH);
+        fis.setVariable("spiderHealth", sH);
+        
+        Variable killability = functionBlock.getVariable("killability");
+        fis.evaluate();
+        Variable spiderStrength = functionBlock.getVariable("spiderStrength");
+        spiderStrength.getLinguisticTerms();
+        
+        //e.kill();
+        
+        int d = (int)killability.getLatestDefuzzifiedValue();
+        System.out.println(d);
+		return d;
+	}//- End of evaluateKillability
+	
 	public static void main(String[] args) throws Exception{
+		JOptionPane.showMessageDialog(null, "Hello Adventurer! \nOur town has been overrun with massive spiders, \nplease help eradicate some of these large pests. \nKill 15 spiders, and you will be rewarded for your assistance! \n\n\t\t\tCheck your stats by pressing the 'S' key. \n\t\t\tPress the 'H' key to use a health potion. \n\t\t\tTo quit, press the 'Esc' key. \n\n\t\t\t\t                    Good Luck!!");
+		
 		new GameRunner();
 		int spiderHealth = 10;
 
